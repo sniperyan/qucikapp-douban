@@ -1,0 +1,16 @@
+<script>
+  /**
+   * 应用级别的配置，供所有页面公用
+   */
+  import './util/regenerator'
+  import {
+    checkEmpty
+  } from './util/util'
+
+  export default {
+    //在app.ux中引入常用的JS库，并暴露给每个页面使用；可以避免每个页面在打包时对JS的重复定义
+    //结构优化的目的是减小页面以及整体rpk包的体积，减少冗余代码
+    checkEmpty,
+    // createShortcut: util.createShortcut
+  }
+</script>

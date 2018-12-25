@@ -1,0 +1,50 @@
+<template>
+    <div class="btn" onclick="clickTab(btn.index)">
+        <block if="{{active == btn.index}}">
+            <image src="{{btn.selectedImage}}" class="img"></image>
+            <text class="selectedText">{{btn.name}}</text>
+        </block>
+        <block else>
+                <image src="{{btn.image}}" class="img"></image>
+                <text class="text">{{btn.name}}</text>
+        </block>
+
+    </div>
+
+</template>
+<style>
+    .btn{
+        flex: 1;
+        flex-direction: column;
+        background-color: #eeeeee;
+        align-items: center;
+        justify-content: center;
+    }
+    .img{
+        width: 60px;
+        height: 60px;
+    }
+    .text{
+        font-size: 32px;
+    }
+    .selectedText{
+        font-size: 32px;
+        color: #47a86c;
+    }
+
+
+</style>
+<script>
+
+    export default {
+        props: [
+            "btn", "active"
+        ],
+        onInit() {
+        },
+        clickTab(index) { 
+            //父子组件通信，通过子组件触发事件，父组件监听并执行回调函数
+            this.$dispatch("changeActiveTab", { params: index }) 
+        }
+    }
+</script>

@@ -1,0 +1,145 @@
+<template>
+    <div class="search-hd">
+        <div class="search-area">
+            <select class="search-type" onchange="changeSelect">
+                <option value="0" class="search-option">默认</option>
+                <option value="1" class="search-option">类型</option>
+            </select>
+            <input class="search-txt" onchange="updateSearchText" placeholder="{{0 == searchType?'请输入电影标题、演员或导演':'请输入影片类型，如：爱情、喜剧'}}"/>
+            <input type="button" value="搜索" class="search-btn" onclick="search"/>
+        </div>
+        <div class="search-keyword">
+            <text class="search-keyword-title">热门搜索</text>
+            <div class="tag-group">
+                <text for="{{hotKeyword}}" onclick="searchKeyword($item)" class="search-keyword-item">{{$item}}</text>
+            </div>
+            <text class="search-keyword-title">热门标签</text>
+            <div class="tag-group">
+                <text for="{{hotTag}}" onclick="searchTag($item)" class="search-keyword-item">{{$item}}</text>
+            </div>
+        </div>
+
+    </div>
+
+</template>
+<style>
+    .search-hd {
+        width: 100%;
+        background-color: #ffffff;
+        border-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: #f8f8f8;
+        flex-direction: column;
+    }
+
+    .search-area {
+        margin: 30px;
+
+    }
+
+    .search-type {
+        width: 130px;
+        height: 80px;
+        font-size: 32px;
+    }
+
+    .search-option {
+        font-size: 60px;
+    }
+
+    .search-txt {
+        width: 100%;
+        height: 80px;
+        font-size: 30px;
+        border-radius: 10px;
+        padding-top: 20px;
+        padding-left: 20px;
+        border: 1px solid #eeeeee;
+        text-align: left;
+    }
+
+    .search-btn {
+        height: 80px;
+        width: 120px;
+        font-size: 28px;
+    }
+
+    .search-keyword {
+        padding: 30px;
+        flex-direction: column;
+    }
+
+    .search-keyword-title {
+        padding-left: 20px;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        font-size: 30px;
+        border-style: solid;
+        border-left-width: 10px;
+        border-left-color: #47a86c;
+    }
+
+    .search-keyword-item {
+        padding: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 15px;
+        background-color: #fbfbfb;
+        margin: 0px 10px 10px 0px;
+        color: #555555;
+    }
+
+    .tag-group {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+</style>
+<script>
+    import router from '@system.router'
+    import { URL_CONST } from '../Common/js/data'
+
+    const searchUrl = [URL_CONST.searchByKeyword_url, URL_CONST.searchByTag_url]
+
+    export default {
+        data: {
+            searchType: 0,
+            hotKeyword: [], // 热门搜索会接收 热映 的14部电影名称
+            hotTag: ["动作", "喜剧", "爱情", "悬疑"],
+            searchText: ""
+        },
+        onInit() {
+        },
+        updateSearchText(e) {
+            this.searchText = e.text;
+        },
+        search() {
+            router.push({
+                uri: '/SearchResult',
+                params: {
+                    url: searchUrl[this.searchType] + this.searchText,
+                    title: this.searchText
+                }
+            })
+        },
+        changeSelect({ newValue: newValue }) {
+            this.searchType = newValue
+        },
+        searchTag(tag) {
+            router.push({
+                uri: '/SearchResult',
+                params: {
+                    url: URL_CONST.searchByTag_url + tag,
+                    title: tag
+                }
+            })
+        },
+        searchKeyword(keyword) {
+            router.push({
+                uri: '/SearchResult',
+                params: {
+                    url: URL_CONST.searchByKeyword_url + keyword,
+                    title: keyword
+                }
+            })
+        },
+    }
+</script>

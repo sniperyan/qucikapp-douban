@@ -1,0 +1,113 @@
+<template>
+    <div class="filmItem" onclick="showFilmDetail(film.id,film.title)">
+        <stack class="rating-container">
+            <image src="{{checkEmpty(film,'images','large')}}" class="file-cover-image">
+            </image>
+            <text class="film-rating">{{film&& film.rating && film.rating.average||0}}分</text>
+        </stack>
+        <text class="film-title">{{film.title}}</text>
+        <div class="film-tag">
+            <text class="film-tag-item" for="{{film.genres}}" onclick="searchTag($item)">{{$item}}</text>
+        </div>
+    </div>
+
+</template>
+<style>
+    .filmItem {
+        width: 375px;
+        margin: 0px 5px 20px 5px;
+        border-radius: 10px;
+        background-color: #ffffff;
+        border: 1px solid #e4e4e4;
+        flex-direction: column;
+
+    }
+
+    .file-cover-image {
+        width: 375px;
+        height: 500px;
+    }
+
+    .rating-container {
+        width: 375px;
+        height: 500px;
+        flex-direction: column;
+    }
+
+    .film-rating {
+        height: 50px;
+        line-height: 50px;
+        margin-top: 450px;
+        text-align: right;
+        padding-right: 20px;
+        font-size: 24px;
+        width: 375px;
+        opacity: 0.55;
+        background-color: #000000;
+        color: #ffffff;
+    }
+
+    .film-title {
+        padding: 16px;
+        lines:1;
+        text-overflow:ellipsis;
+
+    }
+
+    .film-tag {
+        margin: 10px 0px 20px 16px;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .film-tag-item {
+        padding: 4px 6px;
+        margin-right: 10px;
+        font-size: 24px;
+        border: 1px solid #e4e4e4;
+        border-radius: 10px;
+        background-color: #fafafa;
+        color: #666666;
+    }
+</style>
+<script>
+    import router from '@system.router'
+    import { URL_CONST } from '../Common/js/data'
+
+    export default {
+        props: [
+            "film"
+        ],
+        onInit() {
+        },
+        //checkEmpty
+        checkEmpty(...args) {
+            return this.$app.$def.checkEmpty(...args)
+        },
+        showFilmDetail(id, title) {
+            //router接口的参数params可配置页面跳转时需要传递的参数
+            //页面接收参数方法：在页面的ViewModel的protected属性中声明使用的属性
+            //protected内定义的属性，允许被应用内部页面请求传递的数据覆盖，不允许被应用外部请求传递的数据覆盖
+            router.push({
+                uri: '/FilmDetail',
+                params: {
+                    id: id,
+                    title: title
+                }
+            })
+
+        },
+        searchTag(tag) {
+            router.push({
+                uri: '/SearchResult',
+                params: {
+                    url: URL_CONST.searchByTag_url + tag,
+                    title: tag
+                }
+            })
+
+
+        }
+    }
+
+</script>

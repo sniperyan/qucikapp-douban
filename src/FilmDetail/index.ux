@@ -1,0 +1,267 @@
+<template>
+    <div class="film-detail">
+        <stack class="fd-hd">
+            <image src="{{checkEmpty(filmDetail,'images','large')}}" class="fd-hd-bg"></image>
+            <div class="fd-intro">
+                <image src="{{checkEmpty(filmDetail,'images','large')}}" class="fd-cover"></image>
+                <div class="fd-intro-info">
+                    <text class="fd-title">{{filmDetail.title}}</text>
+                    <text class="fd-intro-txt">导演：{{checkEmpty(filmDetail.directors && filmDetail.directors[0],'name')}}
+                    </text>
+                    <text class="fd-intro-txt">演员：
+                        <block for="{{filmDetail.casts}}">
+                            <span>{{$item.name}}</span>
+                            <block if="{{$idx!==checkEmpty(filmDetail,'casts','length')-1}}">
+                                <span>/</span>
+                            </block>
+                        </block>
+                    </text>
+                    <text class="fd-intro-txt">豆瓣评分：
+
+                        <block if="{{checkEmpty(filmDetail,'rating','average') == 0}}">
+                            <span>暂无评分</span>
+                        </block>
+                        <block else>
+                            <span>{{checkEmpty(filmDetail,'rating','average')}}分</span>
+                        </block>
+                    </text>
+                    <text class="fd-intro-txt">上映年份：{{filmDetail.year}}年</text>
+                </div>
+            </div>
+        </stack>
+        <div class="fd-data">
+            <div class="fd-data-item">
+                <text class="fd-data-num">{{filmDetail.collect_count}}</text>
+                <text class="fd-data-title">看过</text>
+            </div>
+            <div class="fd-data-item">
+                <text class="fd-data-num">{{filmDetail.wish_count}}</text>
+                <text class="fd-data-title">想看</text>
+            </div>
+            <div class="fd-data-item">
+                <text class="fd-data-num">{{filmDetail.ratings_count}}</text>
+                <text class="fd-data-title">评分人数</text>
+            </div>
+        </div>
+        <div class="fd-bd">
+            <text class="fd-bd-title">
+                剧情简介
+            </text>
+            <text class="fd-bd-intro">{{filmDetail.summary}}</text>
+            <text class="fd-bd-title">导演/演员</text>
+            <div class="fd-bd-person">
+                <swiper autoplay="true">
+                    <div class="fd-bd-person-item" onclick="showPersonDetail(checkEmpty(filmDetail.directors && filmDetail.directors[0],'id'),checkEmpty(filmDetail.directors && filmDetail.directors[0],'name'))">
+                        <image class="fd-bd-person-avatar" src="{{checkEmpty(filmDetail.directors && filmDetail.directors[0],'avatars','medium')}}"></image>
+                        <text class="fd-bd-person-name">{{filmDetail.directors && checkEmpty(filmDetail.directors[0],'name')}}</text>
+                        <text class="fd-bd-person-role">导演</text>
+                    </div>
+                    <block for="{{filmDetail.casts}}">
+                        <div class="fd-bd-person-item" onclick="showPersonDetail($item.id,$item.name)">
+                            <image class="fd-bd-person-avatar" src="{{checkEmpty($item,'avatars','medium')}}"></image>
+                            <text class="fd-bd-person-name">{{$item.name}}</text>
+                            <text class="fd-bd-person-role">演员</text>
+                        </div>
+                    </block>
+                </swiper>
+            </div>
+
+        </div>
+
+        <div class="fd-bd">
+            <text class="fd-bd-title">标签</text>
+            <div class="fd-bd-tag">
+                <block for="{{filmDetail.genres}}">
+                    <text class="fd-bd-tag-item" onclick="searchTag($item)">{{$item}}</text>
+                </block>
+            </div>
+        </div>
+
+
+    </div>
+
+</template>
+<style>
+    .film-detail {
+        flex-direction: column;
+    }
+
+    .fd-hd {
+        width: 750px;
+        height: 600px;
+
+    }
+
+    .fd-hd-bg {
+        width: 750px;
+        height: 600px;
+        opacity: 0.1;
+    }
+
+    .fd-intro {
+        width: 750px;
+        height: 600px;
+    }
+
+    .fd-cover {
+        width: 375px;
+        height: 500px;
+        margin-top: 50px;
+        margin-left: 20px;
+        border-radius: 8px;
+    }
+
+    .fd-intro-info {
+        width: 375px;
+        margin-top: 50px;
+        margin-left: 40px;
+        flex-direction: column;
+    }
+
+    .fd-title {
+        margin-bottom: 30px;
+        font-size: 42px;
+        color: #000000;
+    }
+
+    .fd-intro-txt {
+        margin-bottom: 18px;
+        color: #000000;
+        line-height: 40px;
+    }
+
+    .fd-data {
+        height: 150px;
+        align-items: center;
+        border-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: #f4f4f4;
+    }
+
+    .fd-data-item {
+        flex: 1;
+        text-align: center;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-style: solid;
+        border-left-width: 1px;
+        border-left-color: #eeeeee;
+    }
+
+    .fd-data-num {
+        font-size: 40px;
+        color: #444444;
+    }
+
+    .fd-data-title {
+        color: #999999;
+    }
+
+    .fd-bd {
+        flex-direction: column;
+        padding: 0px 40px 40px 40px;
+
+    }
+
+    .fd-bd-title {
+        padding-left: 20px;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #444444;
+        border-style: solid;
+        border-left-width: 10px;
+        border-left-color: #47a86c;
+    }
+
+    .fd-bd-person {
+        width: 750px;
+        height: 550px;
+    }
+
+    .fd-bd-person-item {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .fd-bd-person-avatar {
+        width: 280px;
+        height: 400px;
+    }
+
+    .fd-bd-person-name {
+        color: #666666;
+        text-align: center;
+    }
+
+    .fd-bd-person-role {
+        color: #999999;
+        text-align: center;
+    }
+
+    .fd-bd-tag-item {
+        padding: 5px 10px;
+        margin-right: 15px;
+        border: 1px solid #cccccc;
+        border-radius: 10px;
+        color: #666666;
+    }
+</style>
+<script>
+    import router from '@system.router'
+    import fetch from '@system.fetch'
+    import { URL_CONST, PAGE_CONFIG } from '../Common/js/data'
+
+    export default {
+        protected: {
+            id: "", //接收页面传递过来的参数
+            title: "", //接收页面传递过来的参数
+            filmDetail: {}
+        },
+        onInit() {
+            this.$page.setTitleBar({ text: this.title });
+            this.fetchFilmDetail();
+        },
+        //checkEmpty
+        checkEmpty(...args) {
+            return this.$app.$def.checkEmpty(...args)
+        },
+
+        async fetchFilmDetail() {
+            try {
+                const response = await fetch.fetch({
+                    url: URL_CONST.subject_url + this.id,
+                    method: "GET"
+                })
+                this.filmDetail = JSON.parse(response.data.data);
+            } catch (err) {
+                console.info('error', err)
+
+            }
+        },
+        showPersonDetail(id, name) {
+            router.push({
+                uri: '/PersonDetail',
+                params: {
+                    id: id,
+                    title: name
+                }
+            })
+
+        },
+        searchTag(tag) {
+            router.push({
+                uri: '/SearchResult',
+                params: {
+                    url: URL_CONST.searchByTag_url + tag,
+                    title: tag
+                }
+            })
+
+
+        }
+    }
+
+</script>

@@ -1,0 +1,78 @@
+<import name="filmlist" src="../Home/filmlist"></import>
+<template>
+    <filmlist refreshing="{{refreshing}}" films="{{films}}" has-more="{{hasMore}}">
+
+    </filmlist>
+
+</template>
+<style>
+    
+</style>
+<script>
+    import router from '@system.router'
+    import fetch from '@system.fetch'
+    import { URL_CONST, PAGE_CONFIG } from '../Common/js/data'
+
+
+    export default {
+        protected: {
+            url: "",
+            title: "",
+            films:[],
+            hasMore: true,
+            start: 0,
+            refreshing: false
+        },
+        onInit() {
+            this.$page.setTitleBar({ text: this.title });
+            this.fetchSearch();
+            this.$on("onrefresh", this.onrefresh);
+            this.$on("loadMoreData", this.loadMoreData);
+        },
+
+        cleanFilms() {
+            this.hasMore = true;
+            this.start = 0;
+            this.films = [];
+
+        },
+        async fetchSearch() {
+            
+            try {
+                const response = await fetch.fetch({
+                    url: this.url,
+                    method: "GET",
+                    data: {
+                        start: this.start,
+                        count: PAGE_CONFIG.count
+                    }
+
+                })
+                const res = JSON.parse(response.data.data);
+
+                if (res.subjects.length === 0) {
+                    this.hasMore = false;
+                } else {
+                    this.films = this.films.concat(res.subjects);
+                    this.start = this.start + res.subjects.length;
+                }
+                if(this.refreshing){
+                    this.refreshing = false;
+                }
+
+            } catch (err) {
+                console.info('error', err)
+
+            }
+        },
+        loadMoreData() {
+            this.fetchSearch();
+        },
+        onrefresh() {
+            this.cleanFilms();
+            this.refreshing = true;
+            this.fetchSearch();
+        },
+    }
+
+</script>

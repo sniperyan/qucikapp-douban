@@ -1,0 +1,107 @@
+<import name="filmitem" src="./filmitemsection"></import>
+<template>
+    <refresh refreshing="{{refreshing}}" onrefresh="onrefresh">
+        <list columns="2" class="film-list {{marginBottom}}" onscrollbottom="loadMoreData">
+            <block for="{{films}}">
+                <list-item type="product">
+                    <filmitem film="{{$item}}"></filmitem>
+                </list-item>
+
+
+            </block>
+            <block if="{{hasMore}}">
+                <block if="{{films.length%2!=0}}">
+                    <!-- 列表数为奇数个  防止loadMore展示错乱-->
+                    <list-item columnSpan="1" type="placeholder" class="tip-message-container">
+
+                    </list-item>
+                </block>
+                <block if="{{films.length>=4 || films.length ===0}}">
+                    <list-item type="loadMore" columnSpan="1" class="tip-message-container">
+                        <div class="spinner"></div>
+                    </list-item>
+                </block>
+
+            </block>
+            <block else>
+                <block if="{{films.length%2!=0}}">
+                    <!-- 列表数为奇数个  防止loadMore展示错乱-->
+                    <list-item columnSpan="1" type="placeholder" class="tip-message-container">
+
+                    </list-item>
+                </block>
+                <list-item type="loadMore" columnSpan="1" class="tip-message-container">
+                    <text class="tip-message">没有更多内容了</text>
+                </list-item>
+
+            </block>
+
+        </list>
+
+    </refresh>
+</template>
+<style>
+    .film-list {
+        width: 750px;
+        flex-wrap: wrap;
+    }
+
+    .marginBottom {
+        margin-bottom: 180px;
+    }
+
+
+    .tip-message-container {
+        width: 750px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .tip-message {
+        color: #67CF22;
+        font-size: 40px;
+    }
+
+    .spinner {
+        animation-name: rotateplane;
+        animation-duration: 1000ms;
+        animation-timing-function: linear;
+        animation-iteration-count: -1;
+        width: 40px;
+        height: 40px;
+        background-color: #67CF22;
+        margin-top: 8px;
+    }
+
+    @keyframes rotateplane {
+        0% {
+            transform: rotateX(0deg) rotateY(0deg);
+        }
+
+        50% {
+            transform: rotateX(-180.1deg) rotateY(0deg);
+        }
+
+        100% {
+            transform: rotateX(-180deg) rotateY(-179.9deg);
+        }
+    }
+</style>
+<script>
+    import router from '@system.router'
+    import { URL_CONST } from '../Common/js/data'
+
+    export default {
+        props: [
+            "refreshing", "hasMore", "films", "marginBottom"
+        ],
+        onInit() {
+        },
+        onrefresh() {
+            this.$dispatch("onrefresh")
+        },
+        loadMoreData() {
+            this.$dispatch("loadMoreData");
+        }
+    }
+</script>

@@ -1,0 +1,178 @@
+<import name="filmlist" src="./filmlist"></import>
+<import name="search" src="./searchpage"></import>
+<import name="tabbtn" src="./tabbtn"></import>
+<template>
+    <div class="container">
+        <block if="{{active==2}}">
+            <search hot-keyword="{{hotKeyword}}"></search>
+        </block>
+        <block else>
+            <filmlist refreshing="{{refreshing}}" films="{{films}}" has-more="{{hasMore}}" margin-bottom="{{marginBottom}}">
+
+            </filmlist>
+        </block>
+
+        <div class="tabBar">
+            <tabbtn btn="{{popular}}" active="{{active}}"></tabbtn>
+            <tabbtn btn="{{coming}}" active="{{active}}"></tabbtn>
+            <tabbtn btn="{{search}}" active="{{active}}"></tabbtn>
+            <tabbtn btn="{{top}}" active="{{active}}"></tabbtn>
+
+        </div>
+    </div>
+
+</template>
+<style>
+    .tabBar {
+        flex: 1;
+        flex-direction: row;
+        height: 140px;
+        position: fixed;
+        left: 0px;
+        bottom: 0px;
+    }
+</style>
+<script>
+    import router from '@system.router'
+    import fetch from '@system.fetch'
+    import { URL_CONST, PAGE_CONFIG } from '../Common/js/data'
+    export default {
+        protected: {
+            active: 0,
+            popular: {
+                image: "/Common/images/popular_icon.png",
+                selectedImage: "/Common/images/popular_active_icon.png",
+                name: "热映",
+                index: 0
+            },
+            coming: {
+                image: "/Common/images/coming_icon.png",
+                selectedImage: "/Common/images/coming_active_icon.png",
+                name: "待映",
+                index: 1
+            },
+            search: {
+                image: "/Common/images/search_icon.png",
+                selectedImage: "/Common/images/search_active_icon.png",
+                name: "搜索",
+                index: 2
+            },
+            top: {
+                image: "/Common/images/top_icon.png",
+                selectedImage: "/Common/images/top_active_icon.png",
+                name: "排行",
+                index: 3
+            },
+            hasMore: true,
+            start: 0,
+            // films: [{"rating":{"max":10,"average":7.4,"stars":"40","min":0},"genres":["动作","科幻","惊悚"],"title":"毒液：致命守护者111111111111177777777777777777777777777777777","casts":[{"alt":"https://movie.douban.com/celebrity/1049489/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p5110.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p5110.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p5110.jpg"},"name":"汤姆·哈迪","id":"1049489"},{"alt":"https://movie.douban.com/celebrity/1049491/","avatars":{"small":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p20908.jpg","large":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p20908.jpg","medium":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p20908.jpg"},"name":"米歇尔·威廉姆斯","id":"1049491"},{"alt":"https://movie.douban.com/celebrity/1036731/","avatars":{"small":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p4767.jpg","large":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p4767.jpg","medium":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p4767.jpg"},"name":"里兹·阿迈德","id":"1036731"}],"collect_count":157514,"original_title":"Venom","subtype":"movie","directors":[{"alt":"https://movie.douban.com/celebrity/1274906/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1360083887.75.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1360083887.75.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1360083887.75.jpg"},"name":"鲁本·弗雷斯彻","id":"1274906"}],"year":"2018","images":{"small":"https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2537158013.jpg","large":"https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2537158013.jpg","medium":"https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2537158013.jpg"},"alt":"https://movie.douban.com/subject/3168101/","id":"3168101"},{"rating":{"max":10,"average":5.9,"stars":"30","min":0},"genres":["动画","悬疑"],"title":"名侦探柯南：零的执行人","casts":[{"alt":"https://movie.douban.com/celebrity/1048421/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p11214.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p11214.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p11214.jpg"},"name":"高山南","id":"1048421"},{"alt":"https://movie.douban.com/celebrity/1018954/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1409588765.01.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1409588765.01.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1409588765.01.jpg"},"name":"山口胜平","id":"1018954"},{"alt":"https://movie.douban.com/celebrity/1003697/","avatars":{"small":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p23348.jpg","large":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p23348.jpg","medium":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p23348.jpg"},"name":"山崎和佳奈","id":"1003697"}],"collect_count":33505,"original_title":"名探偵コナン ゼロの執行人","subtype":"movie","directors":[{"alt":"https://movie.douban.com/celebrity/1360044/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1476275792.3.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1476275792.3.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1476275792.3.jpg"},"name":"立川让","id":"1360044"}],"year":"2018","images":{"small":"https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2537037239.jpg","large":"https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2537037239.jpg","medium":"https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2537037239.jpg"},"alt":"https://movie.douban.com/subject/27110363/","id":"27110363"},{"rating":{"max":10,"average":7.2,"stars":"40","min":0},"genres":["剧情","爱情"],"title":"你好，之华","casts":[{"alt":"https://movie.douban.com/celebrity/1027798/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p53446.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p53446.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p53446.jpg"},"name":"周迅","id":"1027798"},{"alt":"https://movie.douban.com/celebrity/1274463/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1508777978.76.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1508777978.76.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1508777978.76.jpg"},"name":"秦昊","id":"1274463"},{"alt":"https://movie.douban.com/celebrity/1322949/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1502100680.45.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1502100680.45.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1502100680.45.jpg"},"name":"杜江","id":"1322949"}],"collect_count":41080,"original_title":"你好，之华","subtype":"movie","directors":[{"alt":"https://movie.douban.com/celebrity/1005064/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p85.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p85.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p85.jpg"},"name":"岩井俊二","id":"1005064"}],"year":"2018","images":{"small":"https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2538345957.jpg","large":"https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2538345957.jpg","medium":"https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2538345957.jpg"},"alt":"https://movie.douban.com/subject/27615233/","id":"27615233"},{"rating":{"max":10,"average":8,"stars":"40","min":0},"genres":["剧情","喜剧","传记"],"title":"流浪猫鲍勃","casts":[{"alt":"https://movie.douban.com/celebrity/1049964/","avatars":{"small":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1367324415.79.jpg","large":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1367324415.79.jpg","medium":"https://img1.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1367324415.79.jpg"},"name":"卢克·崔德威","id":"1049964"},{"alt":"https://movie.douban.com/celebrity/1367373/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1484881791.41.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1484881791.41.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1484881791.41.jpg"},"name":"猫鲍勃","id":"1367373"},{"alt":"https://movie.douban.com/celebrity/1275119/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p9824.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p9824.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p9824.jpg"},"name":"露塔·格德米纳斯","id":"1275119"}],"collect_count":88408,"original_title":"A Street Cat Named Bob","subtype":"movie","directors":[{"alt":"https://movie.douban.com/celebrity/1014211/","avatars":{"small":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1361266244.86.jpg","large":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1361266244.86.jpg","medium":"https://img3.doubanio.com/view/celebrity/s_ratio_celebrity/public/p1361266244.86.jpg"},"name":"罗杰·斯波蒂斯伍德","id":"1014211"}],"year":"2016","images":{"small":"https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2535524955.jpg","large":"https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2535524955.jpg","medium":"https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2535524955.jpg"},"alt":"https://movie.douban.com/subject/26685451/","id":"26685451"}],
+            films: [],
+            refreshing: false,
+            marginBottom: "marginBottom",
+            hotKeyword: []
+        },
+        
+        
+        onInit() {
+            //父子组件通信，通过子组件触发事件，父组件监听并执行回调函数
+            this.$on("changeActiveTab", this.changeActiveTab);
+            this.$on("onrefresh", this.onrefresh);
+            this.$on("loadMoreData", this.loadMoreData);
+        },
+        onReady() {
+            this.fetchFilms()
+        },
+        cleanFilms() {
+            this.hasMore = true;
+            this.start = 0;
+            this.films = [];
+
+        },
+        async fetchFilms() {
+            let url = '';
+            switch (this.active) {
+                case 0:
+                    url = URL_CONST.popular_url;
+                    break;
+                case 1:
+                    url = URL_CONST.coming_url;
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+                    url = URL_CONST.top_url;
+                    break;
+
+            }
+            try {
+                const response = await fetch.fetch({
+                    url: url,
+                    method: "GET",
+                    data: {
+                        city: PAGE_CONFIG.city,
+                        start: this.start,
+                        count: PAGE_CONFIG.count
+                    }
+
+                })
+                const res = JSON.parse(response.data.data);
+
+                if (res.subjects.length === 0) {
+                    this.hasMore = false;
+                } else {
+                    this.films = this.films.concat(res.subjects);
+                    this.start = this.start + res.subjects.length;
+                    this.setHotKeyword();
+                }
+                if(this.refreshing){
+                    this.refreshing = false;
+                }
+
+            } catch (err) {
+                console.info('error', err)
+
+            }
+        },
+        // 设置searchpage的热门搜索
+        setHotKeyword() {
+            if (this.active === 0) {
+                this.hotKeyword = this.films.slice(0, 14).map((item) => {
+                    return item.title
+                })
+            }
+        },
+        changeActiveTab(event) {
+            this.cleanFilms();
+            const index = event.detail.params;
+            this.active = index;
+            switch (index) {
+                case 0:
+                    this.$page.setTitleBar({ text: "热映" });
+                    break;
+                case 1:
+                    this.$page.setTitleBar({ text: "待映" });
+                    break;
+                case 2:
+                    this.$page.setTitleBar({ text: "搜索" });
+                    break;
+                case 3:
+                    this.$page.setTitleBar({ text: "排行" });
+                    break;
+
+            }
+            //搜索页面不需要请求电影资源
+            if (index != 2) {
+                this.fetchFilms()
+            }
+        },
+        loadMoreData() {
+            this.fetchFilms();
+        },
+        onrefresh() {
+            this.cleanFilms();
+            this.refreshing = true;
+            this.fetchFilms();
+        },
+    }
+</script>

@@ -1,0 +1,175 @@
+<template>
+    <div class="person-page">
+        <stack class="pd-hd">
+            <image class="pd-hd-bg" src="{{checkEmpty(personDetail,'avatars','medium')}}"></image>
+            <div class="pd-intro">
+                <image src="{{checkEmpty(personDetail,'avatars','medium')}}" class="pd-avatar"></image>
+                <text class="pd-name-cn">{{personDetail.name}}</text>
+                <text class="pd-name-en">{{personDetail.name_en}}</text>
+                <text class="pd-address">{{personDetail.born_place}}</text>
+            </div>
+        </stack>
+        <text class="pd-title">主要作品</text>
+        <div class="pd-work">
+            <block for="{{personDetail.works}}">
+                <div class="pd-work-item" onclick="showFilmDetail(checkEmpty($item,'subject','id'),checkEmpty($item,'subject','title'))">
+                    <image class="pd-work-cover" src="{{checkEmpty($item,'subject','images','large')}}"></image>
+                    <div class="pd-work-intro">
+                        <text class="pd-work-title">{{checkEmpty($item,'subject','title')}}</text>
+                        <text class="pd-work-roles">担任：{{$item.roles}}</text>
+                    </div>
+                </div>
+
+            </block>
+        </div>
+
+    </div>
+
+</template>
+<style>
+    .person-page {
+        flex-direction: column;
+    }
+
+    .pd-hd {
+        width: 100%;
+        height: 600px;
+    }
+
+    .pd-hd-bg {
+        width: 100%;
+        height: 600px;
+        opacity: 0.2;
+    }
+
+    .pd-intro {
+        flex-direction: column;
+        width: 100%;
+        height: 600px;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+    }
+
+    .pd-avatar {
+        width: 280px;
+        height: 280px;
+        border-radius: 140px;
+    }
+
+    .pd-name-cn {
+        padding: 10px 20px;
+        margin-top: 30px;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 32px;
+        font-size: 32px;
+    }
+
+    .pd-name-en {
+        margin-top: 20px;
+        font-size: 24px;
+    }
+
+    .pd-address {
+        margin-top: 20px;
+        font-size: 24px;
+    }
+
+    .pd-title {
+        padding-left: 20px;
+        margin-top: 40px;
+        margin-left: 15px;
+        margin-bottom: 20px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #444444;
+        border-style: solid;
+        border-left-width: 10px;
+        border-left-color: #47a86c;
+    }
+
+    .pd-work {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .pd-work-item {
+        width: 360px;
+        background-color: #f8f8f8;
+        border: 1px solid #eeeeee;
+        margin-bottom: 15px;
+        flex-direction: column;
+    }
+
+    .pd-work-cover {
+        width: 360px;
+        height: 533px;
+    }
+
+    .pd-work-intro {
+        padding: 10px;
+        flex-direction: column;
+    }
+
+    .pd-work-title {
+        font-size: 36px;
+        color: #333333;
+        lines:1;
+        text-overflow:ellipsis;
+    }
+
+    .pd-work-roles {
+        color: #666666;
+    }
+</style>
+<script>
+    import router from '@system.router'
+    import fetch from '@system.fetch'
+    import { URL_CONST, PAGE_CONFIG } from '../Common/js/data'
+
+
+    export default {
+        protected: {
+            id: "",
+            title: "",
+            personDetail: {}
+        },
+        onInit() {
+            this.$page.setTitleBar({ text: this.title });
+            this.fetchPersonDetail();
+        },
+        //checkEmpty
+        checkEmpty(...args) {
+            return this.$app.$def.checkEmpty(...args)
+        },
+        async fetchPersonDetail() {
+            try {
+                const response = await fetch.fetch({
+                    url: URL_CONST.celebrity_url + this.id,
+                    method: "GET"
+                })
+                this.personDetail = JSON.parse(response.data.data);
+            } catch (err) {
+                console.info('error', err)
+
+            }
+        },
+        showFilmDetail(id, title) {
+            router.push({
+                uri: '/FilmDetail',
+                params: {
+                    id: id,
+                    title: title
+                }
+            })
+
+        }
+
+    }
+
+</script>
